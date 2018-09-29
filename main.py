@@ -114,11 +114,16 @@ def injector(uinput):
 
 
 if __name__ == '__main__':
+    import sys
     devices = [evdev.InputDevice(fn) for fn in evdev.list_devices()]
-    device = [d for d in devices if 'AT Translated Set 2 keyboard' in str(d)][0]
-    uinput = evdev.uinput.UInput.from_device(device, name='keymapper')
-    on_event = compose(
-        #logger,
-        EventTranlator,
-        injector(uinput))
-    run_loop(device, on_event)
+    if sys.argv[1] == 'ls':
+        for dev in devices:
+            print(dev)
+    elif sys.argv[1] == 'mirror':
+        device = [d for d in devices if sys.argv[2] in str(d)][0]
+        uinput = evdev.uinput.UInput.from_device(device, name='keymapper')
+        on_event = compose(
+            #logger,
+            EventTranlator,
+            injector(uinput))
+        run_loop(device, on_event)
